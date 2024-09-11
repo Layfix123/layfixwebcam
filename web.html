@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Capture</title>
+</head>
+<body>
+    <h1>Camera Automation</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="start">Start Capturing</button>
+    <div id="images"></div>
+
+    <script>
+        let video = document.getElementById('video');
+        let imageContainer = document.getElementById('images');
+        let captureCount = 0;
+        let maxImages = 50;
+
+        // Access user's camera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            });
+
+        document.getElementById('start').addEventListener('click', () => {
+            let captureInterval = setInterval(() => {
+                if (captureCount >= maxImages) {
+                    clearInterval(captureInterval);
+                    return;
+                }
+
+                let canvas = document.createElement('canvas');
+                canvas.width = 640;
+                canvas.height = 480;
+                let context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                let img = document.createElement('img');
+                img.src = canvas.toDataURL();
+                imageContainer.appendChild(img);
+
+                captureCount++;
+            }, 3000); // Capture an image every 3 seconds
+        });
+    </script>
+</body>
+</html>
